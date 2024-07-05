@@ -7,7 +7,6 @@ import { Webhook } from "svix";
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
 
 export async function POST(req: Request) {
-  // Ensure WEBHOOK_SECRET is available
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
@@ -15,28 +14,23 @@ export async function POST(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 
-  // Get the headers
   const headerPayload = headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
 
-  // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
     console.error("Missing svix headers");
     return new Response("Bad Request", { status: 400 });
   }
 
-  // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
-  // Verify the payload with the headers
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -48,7 +42,6 @@ export async function POST(req: Request) {
     return new Response("Bad Request", { status: 400 });
   }
 
-  // Get the ID and type
   const { id } = evt.data;
   const eventType = evt.type;
 
@@ -70,6 +63,11 @@ export async function POST(req: Request) {
     }
 
     if (eventType === "user.updated") {
+      if (!id) {
+        console.error("User ID is undefined for user.updated event");
+        return new Response("Bad Request", { status: 400 });
+      }
+
       const { image_url, first_name, last_name, username } = evt.data;
 
       const user = {
@@ -84,6 +82,11 @@ export async function POST(req: Request) {
     }
 
     if (eventType === "user.deleted") {
+      if (!id) {
+        console.error("User ID is undefined for user.deleted event");
+        return new Response("Bad Request", { status: 400 });
+      }
+
       const deletedUser = await deleteUser(id!);
       return NextResponse.json({ message: "User deleted", user: deletedUser });
     }
@@ -96,5 +99,3 @@ export async function POST(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
-
-
