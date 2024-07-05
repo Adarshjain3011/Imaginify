@@ -47,7 +47,7 @@ const MobileNav = () => {
                 />
 
               <ul className="header-nav_elements">
-              {navLinks?.map((link:any) => {
+              {navLinks.map((link:any) => {
                 const isActive = link.route === pathname
 
                 return (
@@ -84,3 +84,4 @@ const MobileNav = () => {
 }
 
 export default MobileNav
+
