@@ -4,6 +4,7 @@ import { connectToDatabase } from "../database/dbConfig";
 import { handleError } from "../utils";
 
 import User from "../database/models/user.model";
+import { revalidatePath } from "next/cache";
 
 
 // create the new User 
@@ -76,6 +77,31 @@ export async function updateUser(clerkId:string,user:UpdateUserParams){
     }catch(erorr:any){
 
         handleError(erorr);
+    }
+}
+
+
+export async function deleteUser (clerkId:string){
+
+    try{
+
+        await connectToDatabase();
+
+        const findUser = await User.findOne()
+
+
+        if(! findUser) throw new Error("found user failed");
+
+        const deletedUser = await User.findByIdAndDelete(findUser._id);
+
+        revalidatePath("/");
+
+        return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) :null;
+
+    }catch(erorr:any){
+
+        handleError(erorr);
+
     }
 }
 
