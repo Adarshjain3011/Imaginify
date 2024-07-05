@@ -12,6 +12,9 @@ export async function createUser (user:CreateUserParams){
 
     try{
 
+
+        console.log("hellow jii ")
+
         await connectToDatabase();
 
         const newUser = await User.create(user);

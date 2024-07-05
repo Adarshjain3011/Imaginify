@@ -84,7 +84,9 @@
 }
 
 .root-container {
+
   @apply mt-16 flex-1 overflow-auto py-8 lg:mt-0 lg:max-h-screen lg:py-10
+  
 }
 
 /* ========================================== TAILWIND STYLES */
