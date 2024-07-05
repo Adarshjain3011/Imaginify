@@ -3,18 +3,19 @@ import mongoose, { Document, Schema, model, models, mongo } from "mongoose";
 
 // clerkId , name ,email,userName,photo ,creditBalance ,PlanId 
 
-export interface IUser extends Document {
+// export interface IUser extends Document {
 
-    clerkId: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    userName: string;
-    photo: string;
-    creditBalance: number;
-    planId:Number;
+//     clerkId: string;
+//     username:string
+//     email: string;
+//     firstName: string;
+//     lastName: string;
+//     userName: string;
+//     photo: string;
+//     creditBalance: number;
+//     planId:Number;
 
-}
+// }
 
 
 const userSchema = new Schema({
@@ -31,10 +32,9 @@ const userSchema = new Schema({
         type:String,
         required:true,
         unique:true,
-        match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
     },
-    userName:{
+    username:{
 
         type:String,
         required:true,
