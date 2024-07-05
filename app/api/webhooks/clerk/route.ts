@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-// import { clerkClient } from "@clerk/nextjs";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -8,13 +7,12 @@ import { Webhook } from "svix";
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
+  // Ensure WEBHOOK_SECRET is available
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
-    );
+    console.error("WEBHOOK_SECRET is not defined");
+    return new Response("Internal Server Error", { status: 500 });
   }
 
   // Get the headers
@@ -25,9 +23,8 @@ export async function POST(req: Request) {
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response("Error occured -- no svix headers", {
-      status: 400,
-    });
+    console.error("Missing svix headers");
+    return new Response("Bad Request", { status: 400 });
   }
 
   // Get the body
@@ -48,73 +45,56 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occured", {
-      status: 400,
-    });
+    return new Response("Bad Request", { status: 400 });
   }
 
   // Get the ID and type
   const { id } = evt.data;
   const eventType = evt.type;
 
-  // CREATE
-  if (eventType === "user.created") {
+  try {
+    if (eventType === "user.created") {
+      const { email_addresses, image_url, first_name, last_name, username } = evt.data;
 
-    const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
+      const user = {
+        clerkId: id || "",
+        email: email_addresses[0].email_address || "",
+        username: username! || "",
+        firstName: first_name || "",
+        lastName: last_name || "",
+        photo: image_url || "",
+      };
 
-    const user = {
-      clerkId: id || "",
-      email: email_addresses[0].email_address || "",
-      username: username! || "",
-      firstName: first_name || "",
-      lastName: last_name || "",
-      photo: image_url || "",
+      const newUser = await createUser(user);
+      return NextResponse.json({ message: "User created", user: newUser });
+    }
 
-    };
+    if (eventType === "user.updated") {
+      const { image_url, first_name, last_name, username } = evt.data;
 
-    const newUser = await createUser(user);
+      const user = {
+        firstName: first_name || "",
+        lastName: last_name || "",
+        username: username! || "",
+        photo: image_url || "",
+      };
 
-    // Set public metadata
-    // if (newUser) {
-    //   await clerkClient.users.updateUserMetadata(id, {
-    //     publicMetadata: {
-    //       userId: newUser._id,
-    //     },
-    //   });
-    // }
+      const updatedUser = await updateUser(id, user);
+      return NextResponse.json({ message: "User updated", user: updatedUser });
+    }
 
-    // return NextResponse.json({ message: "OK", user: newUser });
+    if (eventType === "user.deleted") {
+      const deletedUser = await deleteUser(id!);
+      return NextResponse.json({ message: "User deleted", user: deletedUser });
+    }
+
+    console.log(`Unhandled event type: ${eventType}`);
+    return new Response("Unhandled event type", { status: 400 });
+
+  } catch (error) {
+    console.error("Error processing event:", error);
+    return new Response("Internal Server Error", { status: 500 });
   }
-
-  // UPDATE
-  
-  if (eventType === "user.updated") {
-    
-    const { id, image_url, first_name, last_name, username } = evt.data;
-
-    const user = {
-      firstName: first_name || "",
-      lastName: last_name || "",
-      username: username! || "",
-      photo: image_url || "",
-    };
-
-    const updatedUser = await updateUser(id, user);
-
-    return NextResponse.json({ message: "OK", user: updatedUser });
-  }
-
-  // DELETE
-  if (eventType === "user.deleted") {
-    const { id } = evt.data;
-
-    const deletedUser = await deleteUser(id!);
-
-    return NextResponse.json({ message: "OK", user: deletedUser });
-  }
-
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
-
-  return new Response("", { status: 200 });
 }
+
+
