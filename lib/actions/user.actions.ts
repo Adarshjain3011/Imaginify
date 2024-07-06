@@ -30,7 +30,7 @@ export async function createUser (user:CreateUserParams){
 
 // get the user 
 
-export async function getUser (userId:string){
+export async function getUser(userId:string){
 
     try{
 

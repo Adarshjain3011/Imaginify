@@ -13,7 +13,7 @@ import logoText from "@/public/assets/images/logo-text.svg";
 
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
-import { navLinks } from "@/constant/index";
+import { navLinks } from "@/constants/index";
 
 import { Button } from '../ui/button';
 
