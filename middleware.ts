@@ -1,30 +1,12 @@
-import { clerkMiddleware, getAuth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-// Custom middleware
-export default async function middleware(req: NextRequest) {
-  const publicRoutes = ['/api/webhooks/clerk'];
-  const { userId } = getAuth(req);
+const isProtectedRoute = createRouteMatcher(['/protected(.*)'])
 
-  // Allow access to public routes
-  if (publicRoutes.includes(req.nextUrl.pathname)) {
-    return NextResponse.next();
-  }
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect()
+})
 
-  // Redirect unauthenticated users to the sign-in page
-  if (!userId) {
-    return NextResponse.redirect('/sign-in');
-  }
-
-  // Continue to the next middleware or request handler
-  return NextResponse.next();
+export const config = {
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
 }
 
-// Clerk's middleware function
-export const config = {
-  matcher: [
-    '/((?!.*\\..*|_next|api/webhooks/.*).*)',
-    '/',
-    '/(api|trpc)(.*)',
-  ],
-};
