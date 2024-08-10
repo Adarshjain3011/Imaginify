@@ -1,4 +1,6 @@
 
+"use server"
+
 import { connectToDatabase } from "../database/dbConfig";
 
 import { handleError } from "../utils";
@@ -33,6 +35,9 @@ export async function createUser (user:CreateUserParams){
 export async function getUser(userId:string){
 
     try{
+
+        console.log("get user ke andar");
+        
 
         await connectToDatabase();
 
