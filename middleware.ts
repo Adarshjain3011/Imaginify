@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server'
-import { clerkMiddleware } from '@clerk/nextjs/server'
 
-// Define which routes are considered protected
-const isProtectedRoute = (pathname: string) => pathname.startsWith('/protected')
-
-export default clerkMiddleware((auth, req) => {
-
-  return NextResponse.next()
-})
+import { NextRequest } from 'next/server';
+export default function middleware(req:NextRequest) {
+  console.log('Middleware triggered');
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
 }
+
