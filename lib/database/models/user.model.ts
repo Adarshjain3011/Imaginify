@@ -34,7 +34,7 @@ const userSchema = new Schema({
         unique:true,
 
     },
-    username:{
+    userName:{
 
         type:String,
         required:true,
