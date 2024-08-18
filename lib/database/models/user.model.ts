@@ -1,5 +1,6 @@
 
 import mongoose, { Document, Schema, model, models, mongo } from "mongoose";
+import { any } from "zod";
 
 // clerkId , name ,email,userName,photo ,creditBalance ,PlanId 
 
@@ -22,7 +23,7 @@ const userSchema = new Schema({
 
     clerkId :{
 
-        type:String,
+        type:Schema.Types.Mixed,
         required:true,
         unique:true,
 
