@@ -15,7 +15,7 @@ export async function createUser (user:any){
     try{
 
 
-        console.log("hellow jii ")
+        console.log("hellow jii create user ke andar  ")
 
         await connectToDatabase();
 
