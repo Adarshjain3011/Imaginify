@@ -23,7 +23,7 @@ const userSchema = new Schema({
 
     clerkId :{
 
-        type:any,
+        type: Schema.Types.Mixed,
         // required:true,
         unique:true,
 
