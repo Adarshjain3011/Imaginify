@@ -38,7 +38,7 @@ const userSchema = new Schema({
     userName:{
 
         type:String,
-        unique:true
+        // unique:true
 
     },
     photo:{
