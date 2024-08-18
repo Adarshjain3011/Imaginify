@@ -1,116 +1,78 @@
-
-"use server"
+"use server";
 
 import { connectToDatabase } from "../database/dbConfig";
-
 import { handleError } from "../utils";
-
 import User from "../database/models/user.model";
 import { revalidatePath } from "next/cache";
 
-
-// create the new User 
-export async function createUser (user:any){
-
-    try{
-
-
-        console.log("hellow jii create user ke andar  ")
+// Create the new User
+export async function createUser(user: any) {
+    try {
+        console.log("Inside createUser");
 
         await connectToDatabase();
 
         const newUser = await User.create(user);
 
         return JSON.parse(JSON.stringify(newUser));
-
-    }catch(erorr:any){
-
-        handleError(erorr);
-        
+    } catch (error: any) {
+        handleError(error);
     }
 }
 
-// get the user 
-
-export async function getUser(userId:string){
-
-    try{
-
-        console.log("get user ke andar");
-        
+// Get the user
+export async function getUser(userId: string) {
+    try {
+        console.log("Inside getUser");
 
         await connectToDatabase();
 
         const findUser = await User.findOne({
+            clerkId: userId,
+        });
 
-            clerkId:userId,
+        if (!findUser) throw new Error("User not found");
 
-        })
-
-        if(!findUser) throw new Error("User not found ")
-
-        
         return JSON.parse(JSON.stringify(findUser));
-
-
-    }catch(erorr:any){
-
-        handleError(erorr);
-
+    } catch (error: any) {
+        handleError(error);
     }
 }
 
-
-
-// update the user 
-
-
-export async function updateUser(clerkId:string,user:UpdateUserParams){
-
-    try{
-
+// Update the user
+export async function updateUser(clerkId: string, user: any) {
+    try {
         await connectToDatabase();
 
-        const updateduser = await User.findByIdAndUpdate({clerkId},user,{
+        const updatedUser = await User.findOneAndUpdate(
+            { clerkId },
+            user,
+            { new: true }
+        );
 
-            new:true,
+        if (!updatedUser) throw new Error("User update failed");
 
-        })
-
-        if(!updateduser) throw new Error("updated user failed");
-
-        return JSON.parse(JSON.stringify(updateduser));
-
-
-    }catch(erorr:any){
-
-        handleError(erorr);
+        return JSON.parse(JSON.stringify(updatedUser));
+    } catch (error: any) {
+        handleError(error);
     }
 }
 
-
-export async function deleteUser (clerkId:string){
-
-    try{
-
+// Delete the user
+export async function deleteUser(clerkId: string) {
+    try {
         await connectToDatabase();
 
-        const findUser = await User.findOne()
+        const findUser = await User.findOne({ clerkId });
 
+        if (!findUser) throw new Error("User not found");
 
-        if(! findUser) throw new Error("found user failed");
-
-        const deletedUser = await User.findByIdAndDelete(findUser._id);
+        const deletedUser = await User.findOneAndDelete({ clerkId });
 
         revalidatePath("/");
 
-        return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) :null;
-
-    }catch(erorr:any){
-
-        handleError(erorr);
-
+        return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+    } catch (error: any) {
+        handleError(error);
     }
 }
-
-
