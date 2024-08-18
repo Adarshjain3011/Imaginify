@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 
 
 // create the new User 
-export async function createUser (user:CreateUserParams){
+export async function createUser (user:any){
 
     try{
 
