@@ -76,3 +76,35 @@ export async function deleteUser(clerkId: string) {
         handleError(error);
     }
 }
+
+
+
+// use the credits 
+
+export async function updateCredits(userId:string,creditFree:number){
+
+    try{
+
+        const updateUserCredits = await User.findOneAndUpdate(
+            
+            { _id: userId},
+            {$inc:{credits :creditFree}},
+            {new:true}
+        )
+
+        if(! updateCredits){
+
+            throw new Error("User's credit update failed");
+        }
+
+        return JSON.parse(JSON.stringify(updateUserCredits));
+
+    }catch(error:any){
+
+        handleError(error);
+
+    }
+}
+
+
+
