@@ -88,7 +88,7 @@ export async function updateCredits(userId:string,creditFree:number){
         const updateUserCredits = await User.findOneAndUpdate(
             
             { _id: userId},
-            {$inc:{credits :creditFree}},
+            {$inc:{creditBalance :creditFree}},
             {new:true}
         )
 
