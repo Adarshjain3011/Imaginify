@@ -1,77 +1,42 @@
+import { Schema, model, models } from "mongoose";
 
-import mongoose, { Document, Schema, model, models, mongo } from "mongoose";
-import { any } from "zod";
+const UserSchema = new Schema({
+  clerkId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  photo: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+  },
+  lastName: {
+    type: String,
+  },
+  planId: {
+    type: Number,
+    default: 1,
+  },
+  creditBalance: {
+    type: Number,
+    default: 10,
+  },
+});
 
-// clerkId , name ,email,userName,photo ,creditBalance ,PlanId 
-
-// export interface IUser extends Document {
-
-//     clerkId: string;
-//     username:string
-//     email: string;
-//     firstName: string;
-//     lastName: string;
-//     userName: string;
-//     photo: string;
-//     creditBalance: number;
-//     planId:Number;
-
-// }
-
-
-const userSchema = new Schema({
-
-    clerkId :{
-
-        type: String,
-        // required:true,
-        unique:true,
-
-    },
-    email:{
-
-        type:String,
-        required:true,
-        unique:true,
-
-    },
-    userName:{
-
-        type:String,
-
-    },
-    photo:{
-
-        type:String,
-
-    },
-    firstName:{
-
-        type:String,
-    },
-    lastName:{
-
-        type:String,
-   
-    },
-    creditBalance:{
-
-        type:Number,
-        default:10
-
-    },
-
-    planId:{
-
-        type:Number,
-        default:1,
-
-
-    }
-})
-
-const User = models?.User || mongoose.model("User",userSchema);
+const User = models?.User || model("User", UserSchema);
 
 export default User;
-
 
