@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server'
-
-import { NextRequest } from 'next/server';
-export default function middleware(req:NextRequest) {
-  console.log('Middleware triggered');
-  return NextResponse.next();
-}
-
+import { authMiddleware } from "@clerk/nextjs/server";
+ 
+export default authMiddleware({
+  publicRoutes: ['/', '/api/webhooks/clerk', '/api/webhooks/stripe']
+});
+ 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
-}
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};
+
+
 
