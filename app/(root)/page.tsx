@@ -1,6 +1,6 @@
 import { Collection } from "@/components/shared/Collection"
 import { navLinks } from "@/constants"
-import { getAlImages } from "@/lib/actions/image.actions"
+import { getAllImages } from "@/lib/actions/image.actions"
 import Image from "next/image"
 import Link from "next/link"
 

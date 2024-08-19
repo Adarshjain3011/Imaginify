@@ -58,7 +58,7 @@ export async function addImage({ image, userId, path }: AddImageParams) {
 
 
 
-// update image 
+// update image   
 
 
 export async function updateImage({ image, userId, path }: AddImageParams) {
