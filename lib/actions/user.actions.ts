@@ -21,7 +21,7 @@ export async function createUser(user: any) {
 }
 
 // Get the user
-export async function getUser(userId: string) {
+export async function getUserById(userId: string) {
     try {
         console.log("Inside getUser");
 
